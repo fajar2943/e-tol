@@ -19,6 +19,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [SiteController::class, 'index']);
 Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/register', [AuthController::class, 'register']);
+Route::post('/register', [AuthController::class, 'store']);
+
+Route::group(['middleware' => ['auth', 'CheckRoles:Customer']], function () {
+    Route::post('/vehicle', [SiteController::class, 'vehicle']);
+});
+Route::group(['middleware' => ['auth', 'CheckRoles:Customer,Admin']], function () {
+    Route::get('/logout', [AuthController::class, 'logout']);
+});
 
 Route::prefix('admin')->group(function(){
     Route::group(['middleware' => ['auth', 'CheckRoles:Admin']], function () {
