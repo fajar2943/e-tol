@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('topups', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->string('inv_no');
-            $table->double('total');
-            $table->enum('status', ['Unpaid', 'Paid']);
-            $table->timestamps();
+        Schema::table('topups', function (Blueprint $table) {
+            $table->string('payment_token')->nullable()->after('status');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('topups');
+        Schema::table('topups', function (Blueprint $table) {
+            $table->dropColumn('payment_token');
+        });
     }
 };

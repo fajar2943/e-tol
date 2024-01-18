@@ -10,6 +10,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "midtrans/midtrans-php": "^2.5",
         "spatie/laravel-medialibrary": "^10.0.0"
     },
     "require-dev": {
@@ -26,7 +27,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/Global.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

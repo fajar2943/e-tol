@@ -20,4 +20,8 @@ class Vehicle extends Model implements HasMedia
     public function user(){
         $this->belongsTo(User::class);
     }
+
+    public function fileUrl(){
+        return ($this->getFirstMediaUrl('vehicles')) ? $this->getFirstMediaUrl('vehicles') : asset('e-tol/img/default.jpg');
+    }
 }

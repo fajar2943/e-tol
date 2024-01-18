@@ -41,7 +41,7 @@ http://www.tooplate.com/view/2109-the-card
                 @else
                 <a href="/logout" class="btn btn-secondary my-3">Logout</a>
                 @endif
-                <a class="tm-navbar-menu" href="#">Menu</a>
+                <a class="tm-navbar-menu" id="menu" href="#">Menu</a>
                 <ul class="tm-nav-links">
                     <li class="tm-nav-item active">
                         <a href="#" data-linkid="0" data-align="right" class="tm-nav-link">Intro</a>
@@ -51,7 +51,7 @@ http://www.tooplate.com/view/2109-the-card
                         <a href="#" data-linkid="1" data-align="right" class="tm-nav-link">History</a>
                     </li>
                     <li class="tm-nav-item">
-                        <a href="#" data-linkid="2" data-align="middle" class="tm-nav-link">Vehicles</a>
+                        <a href="#" id="vehiclePage" data-linkid="2" data-align="middle" class="tm-nav-link">Vehicles</a>
                     </li>
                     <li class="tm-nav-item">
                         <a href="#" data-linkid="3" data-align="left" class="tm-nav-link">Topup</a>
@@ -113,39 +113,85 @@ http://www.tooplate.com/view/2109-the-card
                                     Add Vehicle
                                 </button>
                             </div>
-                            <div class="grid tm-gallery">
+                            <div class="grid">
                                 @foreach ($vehicles as $vehicle)
                                     <figure class="effect-goliath tm-gallery-item">
-                                        <img src="{{asset('site')}}/img/01.jpg" alt="Image 1" class="">
+                                        <img src="{{$vehicle->fileUrl()}}" alt="Image 1" class="">
                                         <figcaption>
                                             <h2>{{$vehicle->name}}</h2>
-                                            <p style="z-index: 5000;">{{$vehicle->number}} <br>
+                                            <p>{{$vehicle->number}} <br>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                    data-target="#editVehicle{{$vehicle->id}}">
+                                                    Edit
+                                                </button>
                                                 <a class="btn btn-warning" href="/vehicle/{{$vehicle->id}}/delete">Hapus</a>
                                             </p>
-                                            <a href="{{asset('site')}}/img/01.jpg">View more</a>
                                         </figcaption>
-                                    </figure>                                    
+                                    </figure>  
+                                    <!-- Modal Edit -->
+                                    <div class="modal fade" style="text-align: left" id="editVehicle{{$vehicle->id}}" tabindex="-1" aria-labelledby="editVehicleLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title text-dark" id="editVehicleLabel">Edit Vehicle</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form action="/vehicle/{{$vehicle->id}}" method="post" enctype="multipart/form-data">
+                                                    <div class="modal-body text-dark">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <input type="hidden" name="id" value="{{$vehicle->id}}">
+                                                        <div class="form-group">
+                                                            <label for="name">Name</label>
+                                                            <input type="text" name="name" value="{{(old('id') == $vehicle->id) ? old('name') : $vehicle->name}}"
+                                                                class="form-control" placeholder="nama vehicle">
+                                                            @if(old('id') == $vehicle->id && $errors->has('name'))
+                                                                <span class="invalid-text text-danger">{{ $errors->first('name') }}</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="number">Plat Number</label>
+                                                            <input type="text" name="number" value="{{(old('id') == $vehicle->id) ? old('number') : $vehicle->number}}"
+                                                                class="form-control" placeholder="plat number">
+                                                            @if(old('id') == $vehicle->id && $errors->has('number'))
+                                                                <span class="invalid-text text-danger">{{ $errors->first('number') }}</span>
+                                                            @endif
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="image">Image</label><br>
+                                                            <input type="file" name="image">
+                                                            @if(old('id') == $vehicle->id && $errors->has('number'))
+                                                                <span class="invalid-text text-danger">{{ $errors->first('number') }}</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>                                  
                                 @endforeach
                             </div>
                         </section>
 
                         <!-- Section 3 Contact -->
                         <section class="tm-section tm-section-3 tm-section-left">
-                            <form action="" class="tm-contact-form" method="post">
+                            <form action="/topup" class="tm-contact-form" method="post">
+                                @csrf
                                 <div class="form-group mb-4">
-                                    <input type="text" id="contact_name" name="contact_name" class="form-control"
-                                        placeholder="Name" required />
-                                </div>
-                                <div class="form-group mb-4">
-                                    <input type="email" id="contact_email" name="contact_email" class="form-control"
-                                        placeholder="Email" required />
-                                </div>
-                                <div class="form-group mb-4">
-                                    <textarea rows="4" id="contact_message" name="contact_message" class="form-control"
-                                        placeholder="Message" required></textarea>
+                                    <input type="number" name="total" class="form-control"
+                                        placeholder="Total Topup" required />
                                 </div>
                                 <div class="form-group mb-0">
-                                    <button type="submit" class="btn tm-send-btn tm-fl-right">Send</button>
+                                    <button type="submit" class="btn tm-send-btn tm-fl-right">Topup Sekarang</button>
                                 </div>
                             </form>
                         </section>
@@ -183,24 +229,31 @@ http://www.tooplate.com/view/2109-the-card
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="/vehicle" method="post">
+                <form action="/vehicle" method="post" enctype="multipart/form-data">
                     <div class="modal-body text-dark">
                         @csrf
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" name="name" value="{{old('name')}}" class="form-control" id="name"
+                            <input type="text" name="name" value="{{(old('id')) ? '' : old('name')}}" class="form-control" id="name"
                                 placeholder="nama vehicle">
-                            @error('name')
-                            <span class="invalid-text text-danger">{{ $message }}</span>
-                            @enderror
+                            @if(!old('id') && $errors->has('name'))
+                                <span class="invalid-text text-danger">{{ $errors->first('name') }}</span>
+                            @endif
                         </div>
                         <div class="form-group">
                             <label for="number">Plat Number</label>
-                            <input type="text" name="number" value="{{old('number')}}" class="form-control" id="number"
+                            <input type="text" name="number" value="{{(old('id')) ? '' : old('number')}}" class="form-control" id="number"
                                 placeholder="plat number">
-                            @error('number')
-                            <span class="invalid-text text-danger">{{ $message }}</span>
-                            @enderror
+                            @if(!old('id') && $errors->has('number'))
+                                <span class="invalid-text text-danger">{{ $errors->first('number') }}</span>
+                            @endif
+                        </div>
+                        <div class="form-group">
+                            <label for="image">Image</label><br>
+                            <input type="file" name="image" placeholder="plat image">
+                            @if(!old('id') && $errors->has('image'))
+                                <span class="invalid-text text-danger">{{ $errors->first('image') }}</span>
+                            @endif
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -219,6 +272,7 @@ http://www.tooplate.com/view/2109-the-card
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous">
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         let slickInitDone = false;
@@ -383,6 +437,34 @@ http://www.tooplate.com/view/2109-the-card
             });
         }
 
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            @if(Session::has('success'))
+                openPage('{{Session::get("page")}}');
+                Swal.fire({
+                    title: 'Sukses',
+                    text: '{{Session::get("success")}}',
+                    icon: 'success',
+                    confirmButtonText: 'Tutup'
+                });
+            @endif
+
+            @if(old("id"))
+                let id = '{{old("id")}}';
+                openPage('#vehiclePage');
+                $('#editVehicle'+id).modal('show');
+            @elseif($errors->any())
+                openPage('#vehiclePage');
+                $('#addVehicle').modal('show');
+            @endif
+        });
+
+        function openPage(page){
+            $('#menu').trigger('click');
+            $(page).trigger('click');
+        }
     </script>
 </body>
 

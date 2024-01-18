@@ -24,6 +24,10 @@ Route::post('/register', [AuthController::class, 'store']);
 
 Route::group(['middleware' => ['auth', 'CheckRoles:Customer']], function () {
     Route::post('/vehicle', [SiteController::class, 'vehicle']);
+    Route::put('/vehicle/{id}', [SiteController::class, 'updateVehicle']);
+    Route::get('/vehicle/{id}/delete', [SiteController::class, 'deleteVehicle']);
+    Route::post('/topup', [SiteController::class, 'topup']);
+    Route::get('/invoice/{inv_no}', [SiteController::class, 'invoice']);
 });
 Route::group(['middleware' => ['auth', 'CheckRoles:Customer,Admin']], function () {
     Route::get('/logout', [AuthController::class, 'logout']);
