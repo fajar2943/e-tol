@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SiteController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,5 +37,6 @@ Route::group(['middleware' => ['auth', 'CheckRoles:Customer,Admin']], function (
 Route::prefix('admin')->group(function(){
     Route::group(['middleware' => ['auth', 'CheckRoles:Admin']], function () {
         Route::get('/', [DashboardController::class, 'index']);
+        Route::resource('/transactions', TransactionController::class);
     });
 });

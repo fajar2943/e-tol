@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Topup;
+use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Midtrans\Config;
@@ -60,7 +62,7 @@ class SiteController extends Controller
 
     public function topup(Request $request){
         $request['user_id'] = auth()->user()->id;
-        $request['inv_no'] = 'INV-'.date('dmy');
+        $request['inv_no'] = 'INV-'.date('ymd');
         $request['status'] = 'Unpaid';
 
         $topup = Topup::create($request->all());
@@ -100,5 +102,45 @@ class SiteController extends Controller
         }else{
             return view('site.invoice', compact('topup'));
         }
+    }
+
+    public function callback(Request $request){
+        $serverKey = config('midtrans.server_key');
+        $hashed = hash("sha512", $request->order_id.$request->status_code.$request->gross_amount.$serverKey);
+        if($hashed == $request->signature_key){
+            if(($request->transaction_status == 'capture' && $request->payment_type == 'credit_card' && $request->fraud_status == 'accept') or $request->transaction_status == 'settlement'){
+                $topup = Topup::whereInvNo($request->order_id)->first();
+                $topup->update(['status' => 'Paid']);
+                $user = User::find($topup->user_id);
+                $user->update(['balance' => $user->balance + $topup->total]);
+            }
+
+            // elseif($request->transaction_status == 'expire'){
+
+            // }elseif($request->transaction_status == 'refund'){
+                        
+            // }
+
+            return $topup->status;
+        }
+        return 'Kode Hash Salah';
+    }
+
+    public function transaction(Request $request){
+        $vehicle = Vehicle::whereNumber($request->number)->first();
+        if(!$vehicle){
+            return 'Plat Nomor tidak valid';
+        }
+        $user = User::find($vehicle->user_id);
+        if($user->balance < $request->price){
+            return 'Saldo tidak cukup';
+        }
+        Transaction::create([
+            'vehicle_id' => $vehicle->id, 'price' => $request->price, 
+            'saldo_awal' => $user->balance, 'saldo_akhir' => $user->balance - $request->price,
+        ]);
+        $user->update(['balance' => $user->balance - $request->price]);
+
+        return 'Transaksi Berhasil';
     }
 }
