@@ -39,7 +39,7 @@
                 <thead>
                   <tr>
                     <th style="width: 10px">#</th>
-                    {{-- <th>Plat Number</th> --}}
+                    <th>Plat Number</th>
                     <th>Harga</th>
                     <th>Saldo Awal</th>
                     <th>Saldo Akhir</th>
@@ -50,7 +50,7 @@
                     @foreach ($transactions as $transaction)
                         <tr>
                             <td>{{$loop->iteration}}</td>
-                            {{-- <td>{{dd($transaction->vehicle->number)}}</td> --}}
+                            <td>{{$transaction->vehicle->number}}</td>
                             <td>{{rupiah($transaction->price)}}</td>
                             <td>{{rupiah($transaction->saldo_awal)}}</td>
                             <td>{{rupiah($transaction->saldo_akhir)}}</td>

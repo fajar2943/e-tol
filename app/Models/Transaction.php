@@ -12,6 +12,6 @@ class Transaction extends Model
     protected $guarded = ['id'];
 
     public function vehicle(){
-        $this->belongsTo(Vehicle::class);
+        return $this->belongsTo(Vehicle::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RealtimeChart;
 use App\Models\Topup;
 use App\Models\Transaction;
 use App\Models\User;
@@ -140,6 +141,7 @@ class SiteController extends Controller
             'saldo_awal' => $user->balance, 'saldo_akhir' => $user->balance - $request->price,
         ]);
         $user->update(['balance' => $user->balance - $request->price]);
+        event(new RealtimeChart('Refresh Chart'));
 
         return 'Transaksi Berhasil';
     }

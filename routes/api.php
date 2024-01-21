@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,3 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('/midtrans-callback', [SiteController::class, 'callback']);
 Route::post('/transaction', [SiteController::class, 'transaction']);
+Route::get('/transaction-chart', [DashboardController::class, 'transaction_chart']);
+Route::get('/revenue-chart', [DashboardController::class, 'revenue_chart']);

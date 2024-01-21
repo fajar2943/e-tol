@@ -84,5 +84,10 @@
 {{-- <script src="{{asset('adminLTE')}}/dist/js/demo.js"></script> --}}
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{asset('adminLTE')}}/dist/js/pages/dashboard.js"></script>
+
+{{-- pusher --}}
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+
+@yield('js')
 </body>
 </html>
