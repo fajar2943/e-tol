@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class RealtimeChart
+class RealtimeChart implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -34,8 +34,8 @@ class RealtimeChart
         return ['my-channel'];
     }
 
-    public function broadcastAs()
-    {
-        return 'my-event';
-    }
+    // public function broadcastAs()
+    // {
+    //     return 'my-event';
+    // }
 }
